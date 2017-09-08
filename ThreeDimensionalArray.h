@@ -6,13 +6,12 @@
 class ThreeDimensionalArray
 {
 public:
-	Matrix* matrices;
-	int depth;
+	float* data;
+	int depth, height, width;
 
 	ThreeDimensionalArray(void);
-	ThreeDimensionalArray(int height, int width, int depth);
+	ThreeDimensionalArray(int depth, int height, int width);
 	ThreeDimensionalArray(Matrix*);
-	ThreeDimensionalArray(Matrix*, int depth);
 	ThreeDimensionalArray(Vector*);
 	Vector* to_vector();
 	Matrix* to_matrix();

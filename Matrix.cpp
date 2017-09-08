@@ -13,6 +13,12 @@ Matrix::Matrix(Vector* vector){
 	this->width = vector->size;
 }
 
+Matrix::Matrix(float* data, int height, int width){
+	this->data = data;
+	this->height = height;
+	this->width = width;
+}
+
 Matrix::Matrix(int height, int width){
 	this->height = height;
 	this->width = width;

@@ -1,5 +1,5 @@
 #include "ThreeDimensionalArray.h"
-
+#include <cstring>
 
 ThreeDimensionalArray::ThreeDimensionalArray(void)
 {
@@ -7,41 +7,40 @@ ThreeDimensionalArray::ThreeDimensionalArray(void)
 
 ThreeDimensionalArray::ThreeDimensionalArray(int depth, int height, int width){
 	this->depth = depth;
-	this->matrices = new Matrix[depth];
-	for (int i = 0; i < depth; ++i){
-		this->matrices[i] = Matrix(height, width);
-	}
+	this->height = height;
+	this->width = width;
+	this->data = new float[depth*height*width];
+	memset(this->data, 0, sizeof(float) * depth * height * width);
 }
 
 ThreeDimensionalArray::ThreeDimensionalArray(Vector* vector){
-	this->matrices = new Matrix(vector);
+	this->data = vector->data;
 	this->depth = 1;
+	this->height = 1;
+	this->width = vector->size;
 }
 
 ThreeDimensionalArray::ThreeDimensionalArray(Matrix* matrix){
-	this->matrices = matrix;
+	this->data = matrix->data;
 	this->depth = 1;
-}
-
-ThreeDimensionalArray::ThreeDimensionalArray(Matrix* matrices, int depth){
-	this->depth = depth;
-	this->matrices = matrices;
+	this->height = matrix->height;
+	this->width = matrix->width;
 }
 
 Vector* ThreeDimensionalArray::to_vector(){
-	return this->matrices[0].flatten();
+	return new Vector(this->data, this->width);
 }
 
 Matrix* ThreeDimensionalArray::to_matrix(){
-	return this->matrices;
+	return new Matrix(this->data, this->height, this->width);
 }
 
 float& ThreeDimensionalArray::element_at(int i, int j, int k){
-	return this->matrices[i].element_at(j , k);
+	return this->data[i * this->height * this->width + j * this->width + k];
 }
 
 Matrix* ThreeDimensionalArray::matrix_at(int i){
-	return this->matrices + i;
+	return new Matrix(this->data + i * this->height * this->width, this->height, this->width);
 }
 
 ThreeDimensionalArray::~ThreeDimensionalArray(void)

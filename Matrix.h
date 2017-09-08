@@ -4,12 +4,13 @@
 
 class Matrix
 {
+public:
 	float* data;
 	int offset_h;
 	int offset_w;
-public:
 	int height, width;
 	Matrix(void);
+	Matrix(float* data, int height, int width);
 	Matrix(int height, int width);
 	Matrix(Vector*);
 	Vector* flatten();
