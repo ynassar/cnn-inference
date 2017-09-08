@@ -10,10 +10,7 @@ Vector::Vector(void)
 Vector::Vector(int size){
 	this->size = size;
 	this->data = new float[size];
-	for(int i = 0; i < size; ++i){
-		this->data[i] = 1;
-	}
-	//memset(this->data, 0, sizeof(float) * size);
+	memset(this->data, 0, sizeof(float) * size);
 }
 
 Vector::Vector(float* data, int size){

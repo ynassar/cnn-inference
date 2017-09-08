@@ -6,10 +6,6 @@
 
 Classifier::Classifier(void)
 {
-	layers.push_back(new FullyConnectedLayer(2, 3));
-	layers.push_back(new TanhActivationLayer());
-	layers.push_back(new FullyConnectedLayer(3, 4));
-	layers.push_back(new SigmoidActivationLayer());
 }
 
 Vector* Classifier::predict(ThreeDimensionalArray* input){

@@ -23,10 +23,7 @@ Matrix::Matrix(int height, int width){
 	this->height = height;
 	this->width = width;
 	this->data = new float[height*width];
-	for(int i = 0; i < height*width; ++i){
-		this->data[i] = 1;
-	}
-	//memset(this->data, 0, sizeof(float) * height * width);
+	memset(this->data, 0, sizeof(float) * height * width);
 }
 
 Vector* Matrix::flatten(){
