@@ -18,4 +18,3 @@ public:
 	void pad_zeros(int num_zeros_h, int num_zeros_w);
 	~Matrix(void);
 };
-
