@@ -10,6 +10,7 @@ public:
 	int depth;
 
 	ThreeDimensionalArray(void);
+	ThreeDimensionalArray(int height, int width, int depth);
 	ThreeDimensionalArray(Matrix*);
 	ThreeDimensionalArray(Matrix*, int depth);
 	ThreeDimensionalArray(Vector*);

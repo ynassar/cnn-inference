@@ -5,6 +5,14 @@ ThreeDimensionalArray::ThreeDimensionalArray(void)
 {
 }
 
+ThreeDimensionalArray::ThreeDimensionalArray(int depth, int height, int width){
+	this->depth = depth;
+	this->matrices = new Matrix[depth];
+	for (int i = 0; i < depth; ++i){
+		this->matrices[i] = Matrix(height, width);
+	}
+}
+
 ThreeDimensionalArray::ThreeDimensionalArray(Vector* vector){
 	this->matrices = new Matrix(vector);
 	this->depth = 1;

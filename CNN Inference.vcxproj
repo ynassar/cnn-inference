@@ -69,6 +69,9 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="NaiveConvolutor.h" />
     <ClInclude Include="NaiveMatrixMultiplier.h" />
+    <ClInclude Include="ReluActivationLayer.h" />
+    <ClInclude Include="SigmoidActivationLayer.h" />
+    <ClInclude Include="TanhActivationLayer.h" />
     <ClInclude Include="ThreeDimensionalArray.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
@@ -81,6 +84,9 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NaiveConvolutor.cpp" />
     <ClCompile Include="NaiveMatrixMultiplier.cpp" />
+    <ClCompile Include="ReluActivationLayer.cpp" />
+    <ClCompile Include="SigmoidActivationLayer.cpp" />
+    <ClCompile Include="TanhActivationLayer.cpp" />
     <ClCompile Include="ThreeDimensionalArray.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>

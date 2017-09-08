@@ -3,7 +3,7 @@
 #include "ThreeDimensionalArray.h"
 #include "Layer.h"
 
-class ConvolutionalLayer : Layer
+class ConvolutionalLayer : public Layer
 {
 	ThreeDimensionalArray* filters;
 	int input_depth;
