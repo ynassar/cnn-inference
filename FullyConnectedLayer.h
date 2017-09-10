@@ -5,9 +5,9 @@
 
 class FullyConnectedLayer : public Layer
 {
+public:
 	Matrix* weights;
 	Vector* biases;
-public:
 	FullyConnectedLayer(void);
 	FullyConnectedLayer(int input_dimension, int output_dimension);
 	ThreeDimensionalArray* forward(ThreeDimensionalArray* input);

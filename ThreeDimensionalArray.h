@@ -19,4 +19,3 @@ public:
 	Matrix* matrix_at(int i);
 	~ThreeDimensionalArray(void);
 };
-

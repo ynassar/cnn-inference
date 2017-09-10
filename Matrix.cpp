@@ -8,18 +8,24 @@ Matrix::Matrix(void)
 }
 
 Matrix::Matrix(Vector* vector){
+	this->offset_h = 0;
+	this->offset_w = 0;
 	this->data = vector->data;
 	this->height = 1;
 	this->width = vector->size;
 }
 
 Matrix::Matrix(float* data, int height, int width){
+	this->offset_h = 0;
+	this->offset_w = 0;
 	this->data = data;
 	this->height = height;
 	this->width = width;
 }
 
 Matrix::Matrix(int height, int width){
+	this->offset_h = 0;
+	this->offset_w = 0;
 	this->height = height;
 	this->width = width;
 	this->data = new float[height*width];

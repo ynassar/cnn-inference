@@ -6,7 +6,7 @@ class NaiveConvolutor
 {
 public:
 	static Matrix* convolute(Matrix* image, Matrix* filter);
-	static void convolute_and_add(Matrix* image, Matrix* filter, Matrix* matrix_to_add_to);
+	static void convolute_and_add(Matrix* image, Matrix* filter, Matrix* matrix_to_add_to, int stride);
 	NaiveConvolutor(void);
 	~NaiveConvolutor(void);
 };

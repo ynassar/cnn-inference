@@ -17,7 +17,14 @@ ThreeDimensionalArray* ConvolutionalLayer::forward(ThreeDimensionalArray* input)
 			Matrix* filter = filters_for_output->matrix_at(j);
 			Matrix* corresponding_channel = input->matrix_at(j);
 			corresponding_channel->pad_zeros(padding, padding);
-			NaiveConvolutor::convolute_and_add(corresponding_channel, filter, out_matrix);
+			NaiveConvolutor::convolute_and_add(corresponding_channel, filter, out_matrix, this->stride);
+		}
+	}
+
+	for (int i = 0; i < this->output_depth; ++i){
+		Matrix* out_matrix = out_matrices->matrix_at(i);
+		for(int j = 0; j < out_matrix->height * out_matrix->width; j ++){
+			out_matrix->data[j] += this->biases[i];
 		}
 	}
 
