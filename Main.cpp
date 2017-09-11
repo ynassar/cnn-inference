@@ -1,19 +1,22 @@
 #include <caffe/caffe.hpp>
-
-#include <caffe/caffe.hpp>
+#ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#endif  // USE_OPENCV
 #include <algorithm>
+#include <iosfwd>
+#include <memory>
 #include <string>
 #include <utility>
-#include <time.h>
 #include <vector>
 #include "Classifier.h"
-#include "Vector.h"
-#include "ThreeDimensionalArray.h"
+
+#ifdef USE_OPENCV
 using namespace caffe;  // NOLINT(build/namespaces)
 using std::string;
+using std::cout;
+using std::endl;
 
 /* Pair (label, confidence) representing a prediction. */
 typedef std::pair<string, float> Prediction;
@@ -49,18 +52,38 @@ Classifier::Classifier(const string& model_file,
                        const string& trained_file,
                        const string& mean_file,
                        const string& label_file) {
+#ifdef CPU_ONLY
   Caffe::set_mode(Caffe::CPU);
+#else
+  Caffe::set_mode(Caffe::GPU);
+#endif
+
   /* Load the network. */
   net_.reset(new Net(model_file, TEST));
   net_->CopyTrainedLayersFrom(trained_file);
+
+  CHECK_EQ(net_->num_inputs(), 1) << "Network should have exactly one input.";
+  CHECK_EQ(net_->num_outputs(), 1) << "Network should have exactly one output.";
+
   Blob* input_layer = net_->input_blobs()[0];
   num_channels_ = input_layer->channels();
+  CHECK(num_channels_ == 3 || num_channels_ == 1)
+    << "Input layer should have 1 or 3 channels.";
   input_geometry_ = cv::Size(input_layer->width(), input_layer->height());
 
   /* Load the binaryproto mean file. */
   SetMean(mean_file);
 
+  /* Load labels. */
+  std::ifstream labels(label_file.c_str());
+  CHECK(labels) << "Unable to open labels file " << label_file;
+  string line;
+  while (std::getline(labels, line))
+    labels_.push_back(string(line));
+
   Blob* output_layer = net_->output_blobs()[0];
+  CHECK_EQ(labels_.size(), output_layer->channels())
+    << "Number of labels is different from the output layer dimension.";
 }
 
 static bool PairCompare(const std::pair<float, int>& lhs,
@@ -84,7 +107,10 @@ static std::vector<int> Argmax(const std::vector<float>& v, int N) {
 /* Return the top N predictions. */
 std::vector<Prediction> Classifier::Classify(const cv::Mat& img, int N) {
   std::vector<float> output = Predict(img);
-
+  for (float x : output){
+	  cout << x << " ";
+  }
+  cout << endl;
   N = std::min<int>(labels_.size(), N);
   std::vector<int> maxN = Argmax(output, N);
   std::vector<Prediction> predictions;
@@ -104,6 +130,9 @@ void Classifier::SetMean(const string& mean_file) {
   /* Convert from BlobProto to TBlob<float> */
   TBlob<float> mean_blob;
   mean_blob.FromProto(blob_proto);
+  CHECK_EQ(mean_blob.channels(), num_channels_)
+    << "Number of channels of mean file doesn't match input layer.";
+
   /* The format of the mean file is planar 32-bit float BGR or grayscale. */
   std::vector<cv::Mat> channels;
   float* data = mean_blob.mutable_cpu_data();
@@ -135,8 +164,10 @@ std::vector<float> Classifier::Predict(const cv::Mat& img) {
   WrapInputLayer(&input_channels);
 
   Preprocess(img, &input_channels);
-
+  int tick = clock();
   net_->Forward();
+  int tock = clock();
+  cout << "Caffe took " << tock - tick << " clocks." << endl;
 
   /* Copy the output layer to a std::vector */
   Blob* output_layer = net_->output_blobs()[0];
@@ -197,72 +228,57 @@ void Classifier::Preprocess(const cv::Mat& img,
    * input layer of the network because it is wrapped by the cv::Mat
    * objects in input_channels. */
   cv::split(sample_normalized, *input_channels);
-}
 
-
-void Preprocess(cv::Mat& img, int num_channels_, cv::Size input_geometry_, const cv::Mat& mean_) {
-  /* Convert the input image to the input image format of the network. */
-  cv::Mat sample;
-  if (img.channels() == 3 && num_channels_ == 1)
-    cv::cvtColor(img, sample, cv::COLOR_BGR2GRAY);
-  else if (img.channels() == 4 && num_channels_ == 1)
-    cv::cvtColor(img, sample, cv::COLOR_BGRA2GRAY);
-  else if (img.channels() == 4 && num_channels_ == 3)
-    cv::cvtColor(img, sample, cv::COLOR_BGRA2BGR);
-  else if (img.channels() == 1 && num_channels_ == 3)
-    cv::cvtColor(img, sample, cv::COLOR_GRAY2BGR);
-  else
-    sample = img;
-
-  cv::Mat sample_resized;
-  if (sample.size() != input_geometry_)
-    cv::resize(sample, sample_resized, input_geometry_);
-  else
-    sample_resized = sample;
-
-  cv::Mat sample_float;
-  if (num_channels_ == 3)
-    sample_resized.convertTo(sample_float, CV_32FC3);
-  else
-    sample_resized.convertTo(sample_float, CV_32FC1);
-
-  cv::Mat sample_normalized;
-  cv::subtract(sample_float, mean_, sample_normalized);
-  img = sample_normalized;
+  CHECK(reinterpret_cast<float*>(input_channels->at(0).data)
+        == net_->input_blobs()[0]->cpu_data<float>())
+    << "Input channels are not wrapping the input layer of the network.";
 }
 
 int main(int argc, char** argv) {
-  string model_file   = "/home/yousefnassar/Documents/projects/cnn-inference/test/test28Gray.2conv.2fc.prototxt";
-  string trained_file = "/home/yousefnassar/Documents/projects/cnn-inference/test/test28Gray.2conv.2fc.caffemodel";
-  string mean_file    = "/home/yousefnassar/Documents/projects/cnn-inference/test/test28Gray.2conv.2fc.mean.binaryproto";
-  string label_file   = "";
+  if (argc != 7) {
+    std::cerr << "Usage: " << argv[0]
+              << " deploy.prototxt network.caffemodel"
+              << " mean.binaryproto labels.txt img.jpg" << std::endl;
+    return 1;
+  }
+
+  ::google::InitGoogleLogging(argv[0]);
+
+  string model_file   = argv[1];
+  string trained_file = argv[2];
+  string mean_file    = argv[3];
+  string label_file   = argv[4];
   Classifier classifier(model_file, trained_file, mean_file, label_file);
-  string file = "/home/yousefnassar/Pictures/cat.jpg";
+  string descriptor_file = argv[5];
+  string file = argv[6];
 
   std::cout << "---------- Prediction for "
             << file << " ----------" << std::endl;
 
   cv::Mat img = cv::imread(file, -1);
-  std::vector<float> predictions;
-  int tick = std::clock();
-  predictions = classifier.Predict(img);
-  int tock = std::clock();
-  std::cout << "Caffe took " << (tock - tick) << " clocks.\n";
-  for (float prediction : predictions){
-	  std::cout << prediction << " ";
-  }
-  std::cout << std::endl;
+  CHECK(!img.empty()) << "Unable to decode image " << file;
+  std::vector<Prediction> predictions = classifier.Classify(img);
 
-  float* imgdata = (float*)img.data;
-  CNNInference::Classifier my_classifier("/home/yousefnassar/Documents/projects/cnn-inference/test/outdescriptor.descriptor");
-  ThreeDimensionalArray* arr = new ThreeDimensionalArray(1, img.rows, img.cols);
 
-  arr->data = imgdata;
-  tick = std::clock();
-  Vector* prediction = my_classifier.predict(arr);
-  tock = std::clock();
-  std::cout << "We took " << (tock - tick) << " clocks.\n";
-  for (int i = 0; i < prediction->size; i ++){
-	  std::cout << prediction->data[i] << " ";
+  CNNInference::Classifier* my_classifier = new CNNInference::Classifier(descriptor_file);
+  float* input_data = classifier.net_->input_blobs()[0]->mutable_cpu_data<float>();
+  int channels = classifier.net_->input_blobs()[0]->channels();
+  int height = classifier.net_->input_blobs()[0]->height();
+  int width = classifier.net_->input_blobs()[0]->width();
+  ThreeDimensionalArray* input = new ThreeDimensionalArray(channels, height, width);
+  input->data = input_data;
+  int tick = clock();
+  Vector* prediction = my_classifier->predict(input);
+  int tock = clock();
+
+  cout << "We took " << tock - tick << " clocks." << endl;
+  for(int i = 0; i < prediction->size; i ++){
+	  cout << prediction->data[i] << " ";
   }
+  cout << endl;
 }
+#else
+int main(int argc, char** argv) {
+  LOG(FATAL) << "This example requires OpenCV; compile with USE_OPENCV.";
+}
+#endif  // USE_OPENCV

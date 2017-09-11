@@ -8,6 +8,7 @@
 #include "PoolingLayer.h"
 #include <algorithm>
 #include <limits>
+#include <iostream>
 using namespace std;
 
 PoolingLayer::PoolingLayer() {
@@ -17,7 +18,12 @@ PoolingLayer::PoolingLayer() {
 
 ThreeDimensionalArray* PoolingLayer::forward(ThreeDimensionalArray* input){
 	int output_height = (input->height - this->kernel_size) / this->stride + 1;
+	if((input->height - this->kernel_size) % this->stride )
+		output_height ++;
 	int output_width = (input->width - this->kernel_size) / this->stride + 1;
+	if ((input->width - this->kernel_size) % this->stride )
+		output_width ++;
+
 	ThreeDimensionalArray* output = new ThreeDimensionalArray(input->depth, output_height, output_width);
 	for (int i = 0; i < input->depth; i ++){
 		Matrix* matrix = input->matrix_at(i);
@@ -29,7 +35,8 @@ ThreeDimensionalArray* PoolingLayer::forward(ThreeDimensionalArray* input){
 					for (int filter_j = 0; filter_j < this->kernel_size; filter_j ++){
 						int mat_i = row_start * this->stride + filter_i;
 						int mat_j = col_start * this->stride + filter_j;
-						mval = max(mval, matrix->element_at(mat_i, mat_j));
+						if (mat_i < matrix->height && mat_j < matrix->width)
+							mval = max(mval, matrix->element_at(mat_i, mat_j));
 					}
 				}
 				out_matrix->element_at(row_start, col_start) = mval;

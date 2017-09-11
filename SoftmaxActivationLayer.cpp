@@ -18,6 +18,7 @@ SoftmaxActivationLayer::SoftmaxActivationLayer() {
 }
 
 ThreeDimensionalArray* SoftmaxActivationLayer::forward(ThreeDimensionalArray* input){
+
 	float ymax = -std::numeric_limits<float>::max();
 	int total_data_size = input->depth * input->height * input->width;
 	for (int i = 0; i < total_data_size; i ++){

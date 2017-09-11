@@ -1,0 +1,10 @@
+n02119789 1 kit_fox
+n02100735 2 English_setter
+n02110185 3 Siberian_husky
+n02096294 4 Australian_terrier
+n02102040 5 English_springer
+n02066245 6 grey_whale
+n02509815 7 lesser_panda
+n02124075 8 Egyptian_cat
+n02417914 9 ibex
+n02123394 10 Persian_cat
