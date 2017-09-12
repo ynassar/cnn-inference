@@ -1,10 +1,16 @@
 #include "ReluActivationLayer.h"
 #include <algorithm>
+#include "Mat.h"
+#include "Mat.cpp"
+#include <iostream>
 using namespace std;
+using namespace CNNInference;
 
-ThreeDimensionalArray* ReluActivationLayer::forward(ThreeDimensionalArray* input){
-	for(int i = 0; i < input->height * input->depth * input->width; ++i){
-		input->data[i] = max(input->data[i], 0.f);
+
+Utils::Mat<float>* ReluActivationLayer::forward(Utils::Mat<float>* input){
+	int limit = input->phy_height * input->phy_width;
+	for (int i = 0; i < limit; i ++){
+		input->matrix[i] = max(input->matrix[i], 0.f);
 	}
 	return input;
 }

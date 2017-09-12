@@ -9,12 +9,14 @@
 #define SOFTMAXACTIVATIONLAYER_H_
 
 #include "Layer.h"
+#include "Mat.h"
 
-class SoftmaxActivationLayer: public Layer {
-public:
-	SoftmaxActivationLayer();
-	ThreeDimensionalArray* forward(ThreeDimensionalArray* input);
-	virtual ~SoftmaxActivationLayer();
-};
-
+namespace CNNInference{
+	class SoftmaxActivationLayer: public Layer {
+	public:
+		SoftmaxActivationLayer();
+		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		virtual ~SoftmaxActivationLayer();
+	};
+}
 #endif /* SOFTMAXACTIVATIONLAYER_H_ */

@@ -10,13 +10,20 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "ThreeDimensionalArray.h"
 #include "Classifier.h"
+#include "Mat.h"
+#include "Mat.cpp"
+#include <chrono>
 
 #ifdef USE_OPENCV
 using namespace caffe;  // NOLINT(build/namespaces)
 using std::string;
 using std::cout;
 using std::endl;
+
+
+float caffe_time_sum = 0;
 
 /* Pair (label, confidence) representing a prediction. */
 typedef std::pair<string, float> Prediction;
@@ -167,7 +174,7 @@ std::vector<float> Classifier::Predict(const cv::Mat& img) {
   int tick = clock();
   net_->Forward();
   int tock = clock();
-  cout << "Caffe took " << tock - tick << " clocks." << endl;
+  caffe_time_sum += tock - tick;
 
   /* Copy the output layer to a std::vector */
   Blob* output_layer = net_->output_blobs()[0];
@@ -234,14 +241,86 @@ void Classifier::Preprocess(const cv::Mat& img,
     << "Input channels are not wrapping the input layer of the network.";
 }
 
-int main(int argc, char** argv) {
-  if (argc != 7) {
-    std::cerr << "Usage: " << argv[0]
-              << " deploy.prototxt network.caffemodel"
-              << " mean.binaryproto labels.txt img.jpg" << std::endl;
-    return 1;
-  }
+double test_mult(int a_rows,int a_cols,int b_rows,int b_cols, int num){
+	Utils::Mat<float> t(a_rows, a_cols,1),tt(b_rows, b_cols, 1);
+	t.fill_rand(0);
+	tt.fill_rand(0);
+//	t.print_shape();
+//	tt.print_shape();
+//	Utils::Mat<float> res = t.mult1(tt);
+//	res.print_shape();
+//	Utils::Mat<float> res1 = t.mult4(tt);
+//	res1.print_shape();
+	clock_t	t1,t2;
+	t1=clock();
+	Utils::Mat<float>* res = new Utils::Mat<float>(t.height, tt.width, 1);
+	for(int i=0;i<num;i++){
+		t.mult2(tt, res);
+	}
+	t2= clock();
+	return ((t2-t1)/ (double) CLOCKS_PER_SEC);
+}
 
+double test_mult3(int a_rows,int a_cols,int b_rows,int b_cols, int num){
+	Utils::Mat<float> t(a_rows, a_cols,8),tt(b_rows, b_cols,8);
+	t.fill_rand(0);
+	tt.fill_rand(0);
+//	t.print_shape();
+//	tt.print_shape();
+//	Utils::Mat<float> res = t.mult1(tt);
+//	res.print_shape();
+//	Utils::Mat<float> res1 = t.mult3(tt);
+//	res1.print_shape();
+	clock_t	t1,t2;
+	t1=clock();
+	Utils::Mat<float>* res = new Utils::Mat<float>(t.height, tt.width, 8);
+	for(int i=0;i<num;i++){
+		t.mult3(tt, res);
+	}
+	t2= clock();
+	return ((t2-t1)/ (double) CLOCKS_PER_SEC);
+}
+
+double test_mult4(int a_rows,int a_cols,int b_rows,int b_cols, int num){
+	Utils::Mat<float> t(a_rows, a_cols,4),tt(b_rows, b_cols, 4);
+	t.fill_rand(0);
+	tt.fill_rand(0);
+//	t.print_shape();
+//	tt.print_shape();
+//	Utils::Mat<float> res = t.mult1(tt);
+//	res.print_shape();
+//	Utils::Mat<float> res1 = t.mult4(tt);
+//	res1.print_shape();
+	clock_t	t1,t2;
+	t1=clock();
+	for(int i=0;i<num;i++){
+		Utils::Mat<float> res = t.mult4(tt);
+	}
+	t2= clock();
+	return ((t2-t1)/ (double) CLOCKS_PER_SEC);
+}
+
+int main(int argc, char** argv) {
+
+	std::srand(1234);
+//
+//	cout<<test_mult3(3,2,2,2,1000000)<<endl;
+//	cout<<test_mult3(3,3,3,15,1000000)<<endl;
+//	cout<<test_mult3(50,70,70,15,1000000)<<endl;
+//	cout<<test_mult3(150,30,30,150,100000)<<endl;
+//	cout<<test_mult3(1024,512,512,2048,1000)<<endl<<endl;;
+
+//	cout<<test_mult(3,2,2,2,1000000)<<endl;
+//	cout<<test_mult(3,3,3,15,1000000)<<endl;
+//	cout<<test_mult(50,70,70,15,1000000)<<endl;
+//	cout<<test_mult(150,30,30,150,100000)<<endl<<endl;
+//	cout<<test_mult(1024,512,512,2048,1000)<<endl;
+
+//	cout<<test_mult4(3,2,2,2,1000000)<<endl;
+//	cout<<test_mult4(3,3,3,15,1000000)<<endl;
+//	cout<<test_mult4(50,70,70,15,1000000)<<endl;
+//	cout<<test_mult4(150,30,30,150,100000)<<endl;
+//	cout<<test_mult4(1024,512,512,2048,1000)<<endl;
   ::google::InitGoogleLogging(argv[0]);
 
   string model_file   = argv[1];
@@ -249,31 +328,19 @@ int main(int argc, char** argv) {
   string mean_file    = argv[3];
   string label_file   = argv[4];
   Classifier classifier(model_file, trained_file, mean_file, label_file);
-  string descriptor_file = argv[5];
-  string file = argv[6];
+  string file = argv[5];
 
   std::cout << "---------- Prediction for "
             << file << " ----------" << std::endl;
 
   cv::Mat img = cv::imread(file, -1);
   CHECK(!img.empty()) << "Unable to decode image " << file;
-  std::vector<Prediction> predictions = classifier.Classify(img);
-
-
-  CNNInference::Classifier* my_classifier = new CNNInference::Classifier(descriptor_file);
-  float* input_data = classifier.net_->input_blobs()[0]->mutable_cpu_data<float>();
-  int channels = classifier.net_->input_blobs()[0]->channels();
-  int height = classifier.net_->input_blobs()[0]->height();
-  int width = classifier.net_->input_blobs()[0]->width();
-  ThreeDimensionalArray* input = new ThreeDimensionalArray(channels, height, width);
-  input->data = input_data;
-  int tick = clock();
-  Vector* prediction = my_classifier->predict(input);
-  int tock = clock();
-
-  cout << "We took " << tock - tick << " clocks." << endl;
-  for(int i = 0; i < prediction->size; i ++){
-	  cout << prediction->data[i] << " ";
+  std::vector<float> predictions;
+  for (int i = 0; i < 10000; i ++){
+	  predictions = classifier.Predict(img);
+  }
+  for (float x : predictions){
+	  cout << x << " ";
   }
   cout << endl;
 }

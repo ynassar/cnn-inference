@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Vector.h"
 #include "ThreeDimensionalArray.h"
 #include "Layer.h"
 #include <vector>
 #include <string>
+#include "Mat.h"
 
 namespace CNNInference{
-
 	class Classifier
 	{
 		std::vector<Layer*> layers;
@@ -15,7 +14,8 @@ namespace CNNInference{
 		Classifier(const std::string& descriptor_file);
 		~Classifier(void);
 
-		Vector* predict(ThreeDimensionalArray* input);
+		Utils::Mat<float>* predict(Utils::Mat<float>* input);
+		Utils::Mat<float>* MatrixFromFile(const std::string& txtfile);
 	};
 
 }

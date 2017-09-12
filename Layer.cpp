@@ -1,4 +1,5 @@
 #include "Layer.h"
+using namespace CNNInference;
 
 Layer::Layer(void)
 {

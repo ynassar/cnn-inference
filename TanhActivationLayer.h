@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Layer.h"
+#include "Mat.h"
 
-class TanhActivationLayer :
-	public Layer
-{
-public:
-	TanhActivationLayer(void);
-	ThreeDimensionalArray* forward(ThreeDimensionalArray* input);
-	~TanhActivationLayer(void);
-};
+namespace CNNInference{
+	class TanhActivationLayer :
+		public Layer
+	{
+	public:
+		TanhActivationLayer(void);
+		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		~TanhActivationLayer(void);
+	};
 
+}

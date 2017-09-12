@@ -1,14 +1,18 @@
 #include "TanhActivationLayer.h"
 #include <cmath>
+using namespace CNNInference;
 
 TanhActivationLayer::TanhActivationLayer(void)
 {
 }
 
-ThreeDimensionalArray* TanhActivationLayer::forward(ThreeDimensionalArray* input){
-	for(int i = 0; i < input->height * input->depth * input->width; ++i){
-		input->data[i] = tanh(input->data[i]);
+Utils::Mat<float>* TanhActivationLayer::forward(Utils::Mat<float>* input){
+
+	int limit = input->phy_height * input->phy_width;
+	for (int i = 0; i < limit; i ++){
+		input->matrix[i] = tanh(input->matrix[i]);
 	}
+
 	return input;
 }
 

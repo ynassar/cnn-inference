@@ -10,27 +10,28 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include "Mat.cpp"
 using namespace std;
+using namespace CNNInference;
 
 SoftmaxActivationLayer::SoftmaxActivationLayer() {
 	// TODO Auto-generated constructor stub
 
 }
 
-ThreeDimensionalArray* SoftmaxActivationLayer::forward(ThreeDimensionalArray* input){
-
+Utils::Mat<float>* SoftmaxActivationLayer::forward(Utils::Mat<float>* input){
 	float ymax = -std::numeric_limits<float>::max();
-	int total_data_size = input->depth * input->height * input->width;
+	int total_data_size = input->height * input->width;
 	for (int i = 0; i < total_data_size; i ++){
-		ymax = max(ymax, input->data[i]);
+		ymax = max(ymax, input->matrix[i]);
 	}
 	float sum = 0;
 	for (int i = 0; i < total_data_size; i ++){
-		input->data[i] = exp(input->data[i] - ymax);
-		sum += input->data[i];
+		input->matrix[i] = exp(input->matrix[i] - ymax);
+		sum += input->matrix[i];
 	}
 	for (int i = 0; i < total_data_size; i ++){
-		input->data[i] /= sum;
+		input->matrix[i] /= sum;
 	}
 	return input;
 }

@@ -21,10 +21,10 @@ input_width = net_param.input_shape[0].dim[3]
 
 out_descriptorfile = open(out_modeldescriptor, 'w')
 
-#out_descriptorfile.write(' '.join([str(input_n), str(input_channels), str(input_height), str(input_width)]) + '\n')
+out_descriptorfile.write(' '.join([str(input_n), str(input_channels), str(input_height), str(input_width)]) + '\n')
 
 net = caffe.Net(prototxt_file, caffemodel_file, caffe.TEST)
-
+print net_param.layer
 for layer in net_param.layer:
     if layer.type == 'Convolution':
         num_channels_out = layer.convolution_param.num_output

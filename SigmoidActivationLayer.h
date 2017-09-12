@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Layer.h"
+#include "Mat.h"
 
-class SigmoidActivationLayer :
-	public Layer
-{
-public:
-	ThreeDimensionalArray* forward(ThreeDimensionalArray* input);
-	SigmoidActivationLayer(void);
-	~SigmoidActivationLayer(void);
-};
-
+namespace CNNInference{
+	class SigmoidActivationLayer :
+		public Layer
+	{
+	public:
+		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		SigmoidActivationLayer(void);
+		~SigmoidActivationLayer(void);
+	};
+}

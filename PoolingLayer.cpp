@@ -7,43 +7,48 @@
 
 #include "PoolingLayer.h"
 #include <algorithm>
+#include "Mat.cpp"
 #include <limits>
 #include <iostream>
 using namespace std;
+using namespace CNNInference;
 
-PoolingLayer::PoolingLayer() {
-	// TODO Auto-generated constructor stub
-
-}
-
-ThreeDimensionalArray* PoolingLayer::forward(ThreeDimensionalArray* input){
-	int output_height = (input->height - this->kernel_size) / this->stride + 1;
-	if((input->height - this->kernel_size) % this->stride )
+PoolingLayer::PoolingLayer(int input_depth, int input_height, int input_width, int kernel_size, int stride) {
+	this->input_depth = input_depth;
+	this->input_height = input_height;
+	this->input_width = input_width;
+	this->kernel_size = kernel_size;
+	this->stride = stride;
+	this->output_height = (input_height - this->kernel_size) / this->stride + 1;
+	if((input_height - this->kernel_size) % this->stride )
 		output_height ++;
-	int output_width = (input->width - this->kernel_size) / this->stride + 1;
-	if ((input->width - this->kernel_size) % this->stride )
+	this->output_width = (input_width - this->kernel_size) / this->stride + 1;
+	if ((input_width - this->kernel_size) % this->stride )
 		output_width ++;
 
-	ThreeDimensionalArray* output = new ThreeDimensionalArray(input->depth, output_height, output_width);
-	for (int i = 0; i < input->depth; i ++){
-		Matrix* matrix = input->matrix_at(i);
-		Matrix* out_matrix = output->matrix_at(i);
-		for (int row_start = 0; row_start < output_height; row_start ++){
-			for (int col_start = 0; col_start < output_width; col_start ++){
+	this->output = new Utils::Mat<float>(input_depth, this->output_height * this->output_width, 8);
+}
+
+Utils::Mat<float>* PoolingLayer::forward(Utils::Mat<float>* input){
+	for (int i = 0; i < this->input_depth; i ++){
+		float* matrix = (*input)[i];
+		float* out_matrix = (*this->output)[i];
+		for (int row_start = 0; row_start < this->output_height; row_start ++){
+			for (int col_start = 0; col_start < this->output_width; col_start ++){
 				float mval = -std::numeric_limits<float>::max();
 				for (int filter_i = 0; filter_i < this->kernel_size; filter_i ++){
 					for (int filter_j = 0; filter_j < this->kernel_size; filter_j ++){
 						int mat_i = row_start * this->stride + filter_i;
 						int mat_j = col_start * this->stride + filter_j;
-						if (mat_i < matrix->height && mat_j < matrix->width)
-							mval = max(mval, matrix->element_at(mat_i, mat_j));
+						if (mat_i < this->input_height && mat_j < this->input_width)
+							mval = max(mval, matrix[this->input_width * mat_i + mat_j]);
 					}
 				}
-				out_matrix->element_at(row_start, col_start) = mval;
+				out_matrix[row_start*this->output_width + col_start] = mval;
 			}
 		}
 	}
-	return output;
+	return this->output;
 }
 
 PoolingLayer::~PoolingLayer() {
