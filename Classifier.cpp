@@ -9,8 +9,8 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "Mat.h"
-#include "Mat.cpp"
+#include "Matrix.h"
+#include "Matrix.cpp"
 using namespace std;
 using namespace CNNInference;
 

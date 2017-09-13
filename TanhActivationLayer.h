@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Layer.h"
-#include "Mat.h"
+#include "Matrix.h"
 
 namespace CNNInference{
 	class TanhActivationLayer :

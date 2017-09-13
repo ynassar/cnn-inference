@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ThreeDimensionalArray.h"
-#include "Mat.h"
+#include "Matrix.h"
 
 namespace CNNInference{
 

@@ -9,7 +9,7 @@
 #define POOLINGLAYER_H_
 
 #include "Layer.h"
-#include "Mat.h"
+#include "Matrix.h"
 
 namespace CNNInference{
 

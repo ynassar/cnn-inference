@@ -1,7 +1,7 @@
 #include "ConvolutionalLayer.h"
-#include "Mat.h"
+#include "Matrix.h"
 #include <iostream>
-#include "Mat.cpp"
+#include "Matrix.cpp"
 using namespace std;
 using namespace CNNInference;
 

@@ -6,8 +6,8 @@
  */
 #include <iostream>
 #include "Classifier.h"
-#include "Mat.h"
-#include "Mat.cpp"
+#include "Matrix.h"
+#include "Matrix.cpp"
 using namespace std;
 using namespace CNNInference;
 
@@ -16,7 +16,6 @@ int main(int argc, char** argv){
 	string image_file = argv[2];
 
 	Classifier* classifier = new Classifier(descriptor_file);
-
 	cout << "Predicting for image " << image_file << endl;
 	CNNInference::Matrix<float>* img_mat = classifier->MatrixFromFile(image_file);
 	CNNInference::Matrix<float>* predictions = classifier->predict(img_mat);

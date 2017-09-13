@@ -4,7 +4,7 @@
 #include "Layer.h"
 #include <vector>
 #include <string>
-#include "Mat.h"
+#include "Matrix.h"
 
 namespace CNNInference{
 	class Classifier

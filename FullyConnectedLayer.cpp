@@ -1,6 +1,6 @@
 #include "FullyConnectedLayer.h"
-#include "Mat.h"
-#include "Mat.cpp"
+#include "Matrix.h"
+#include "Matrix.cpp"
 #include <iostream>
 using namespace std;
 using namespace CNNInference;

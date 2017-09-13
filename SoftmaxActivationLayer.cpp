@@ -10,7 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include "Mat.cpp"
+#include "Matrix.cpp"
 using namespace std;
 using namespace CNNInference;
 

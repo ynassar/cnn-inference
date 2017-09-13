@@ -2,8 +2,8 @@
 
 #include "ThreeDimensionalArray.h"
 #include "Layer.h"
-#include "Mat.h"
-#include "Mat.cpp"
+#include "Matrix.h"
+#include "Matrix.cpp"
 
 namespace CNNInference{
 

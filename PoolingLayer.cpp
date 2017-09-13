@@ -7,7 +7,7 @@
 
 #include "PoolingLayer.h"
 #include <algorithm>
-#include "Mat.cpp"
+#include "Matrix.cpp"
 #include <limits>
 #include <iostream>
 using namespace std;

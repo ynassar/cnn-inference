@@ -2,7 +2,7 @@
 
 #include "ThreeDimensionalArray.h"
 #include "Layer.h"
-#include "Mat.h"
+#include "Matrix.h"
 
 namespace CNNInference {
 	class ConvolutionalLayer : public Layer

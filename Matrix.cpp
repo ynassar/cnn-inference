@@ -8,7 +8,7 @@
 #ifndef _MAT_CPP
 #define _MAT_CPP
 
-#include "Mat.h"
+#include "Matrix.h"
 #include <iostream>
 #include <immintrin.h>
 #include <cstdlib>
@@ -553,6 +553,7 @@ template<typename T>
 	phy_height = ROUND_UP(h, round);
 	phy_width = ROUND_UP(w, round);
 	matrix = (T*)_mm_malloc(sizeof(T)*phy_height*phy_width, align);
+	memset(this->matrix, 0, sizeof(T) *phy_height*phy_width);
 	}
 
 template<typename T>
