@@ -21,9 +21,9 @@ namespace CNNInference{
 		int input_depth;
 		int output_height;
 		int output_width;
-		Utils::Mat<float>* output;
+		CNNInference::Mat<float>* output;
 		PoolingLayer(int input_depth, int input_height, int input_width, int kernel_size, int stride);
-		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input);
 		virtual ~PoolingLayer();
 	};
 }

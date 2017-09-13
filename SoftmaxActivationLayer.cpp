@@ -19,7 +19,7 @@ SoftmaxActivationLayer::SoftmaxActivationLayer() {
 
 }
 
-Utils::Mat<float>* SoftmaxActivationLayer::forward(Utils::Mat<float>* input){
+CNNInference::Mat<float>* SoftmaxActivationLayer::forward(CNNInference::Mat<float>* input){
 	float ymax = -std::numeric_limits<float>::max();
 	int total_data_size = input->height * input->width;
 	for (int i = 0; i < total_data_size; i ++){

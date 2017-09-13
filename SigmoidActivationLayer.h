@@ -8,7 +8,7 @@ namespace CNNInference{
 		public Layer
 	{
 	public:
-		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input);
 		SigmoidActivationLayer(void);
 		~SigmoidActivationLayer(void);
 	};

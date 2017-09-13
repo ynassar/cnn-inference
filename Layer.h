@@ -9,7 +9,7 @@ namespace CNNInference{
 	{
 	public:
 		Layer(void);
-		virtual Utils::Mat<float>* forward(Utils::Mat<float>* input) = 0;
+		virtual CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input) = 0;
 		~Layer(void);
 	};
 

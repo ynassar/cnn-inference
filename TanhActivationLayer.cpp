@@ -6,7 +6,7 @@ TanhActivationLayer::TanhActivationLayer(void)
 {
 }
 
-Utils::Mat<float>* TanhActivationLayer::forward(Utils::Mat<float>* input){
+CNNInference::Mat<float>* TanhActivationLayer::forward(CNNInference::Mat<float>* input){
 
 	int limit = input->phy_height * input->phy_width;
 	for (int i = 0; i < limit; i ++){

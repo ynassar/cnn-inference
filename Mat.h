@@ -8,7 +8,9 @@
 #ifndef MAT_H_
 #define MAT_H_
 #include<vector>
-namespace Utils {
+
+namespace CNNInference {
+
 template<typename T>
 class Mat {
 private:

@@ -7,7 +7,7 @@ using namespace std;
 using namespace CNNInference;
 
 
-Utils::Mat<float>* ReluActivationLayer::forward(Utils::Mat<float>* input){
+CNNInference::Mat<float>* ReluActivationLayer::forward(CNNInference::Mat<float>* input){
 	int limit = input->phy_height * input->phy_width;
 	for (int i = 0; i < limit; i ++){
 		input->matrix[i] = max(input->matrix[i], 0.f);

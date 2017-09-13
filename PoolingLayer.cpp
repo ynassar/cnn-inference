@@ -26,10 +26,10 @@ PoolingLayer::PoolingLayer(int input_depth, int input_height, int input_width, i
 	if ((input_width - this->kernel_size) % this->stride )
 		output_width ++;
 
-	this->output = new Utils::Mat<float>(input_depth, this->output_height * this->output_width, 8);
+	this->output = new CNNInference::Mat<float>(input_depth, this->output_height * this->output_width, 8);
 }
 
-Utils::Mat<float>* PoolingLayer::forward(Utils::Mat<float>* input){
+CNNInference::Mat<float>* PoolingLayer::forward(CNNInference::Mat<float>* input){
 	for (int i = 0; i < this->input_depth; i ++){
 		float* matrix = (*input)[i];
 		float* out_matrix = (*this->output)[i];

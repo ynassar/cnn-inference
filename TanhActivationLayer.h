@@ -9,7 +9,7 @@ namespace CNNInference{
 	{
 	public:
 		TanhActivationLayer(void);
-		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input);
 		~TanhActivationLayer(void);
 	};
 

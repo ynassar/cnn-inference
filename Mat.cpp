@@ -16,7 +16,7 @@
 #include <algorithm>
 
 inline float get_first( const __m128 vec){return _mm_cvtss_f32(_mm_shuffle_ps(vec,vec, _MM_SHUFFLE2(0,0)));}
-namespace Utils {
+namespace CNNInference {
 template<typename T>
 void mult_vector_elemnt_AVX(const T *A, const T *B, T* C, const int& len)
 {
@@ -692,28 +692,8 @@ template<typename T>
 			add_vector_elemnt_AVX(matrix+i*phy_width, op_B.matrix+i*op_B.phy_width,
 					this->matrix+i*phy_width, phy_width);
 	}
-//	template<typename T>
-//	Mat<T> Mat<T>::add(const Mat& op_B) const{
-//
-//	}
-//	template<typename T>
-//	Mat<T> Mat<T>::avx_add(const Mat& op_B) const{}
-//
 
-//	template<typename T>
-//	Mat<T> Mat<T>::usual_convolute(const Mat& image){
-//		Mat<T>res(height+image.height-1, width+image.width-1, round);
-//		memset(res.matrix, 0, sizeof(float) * res.phy_height*res.phy_width);
-//		for(int i=0;i<image.height-height+1;i++)
-//			for(int j=0;j<image.width-width+1;j++)
-//				for(int k=i;k<height;k++)
-//					for(int l=j;l<width;l++)
-//						res.matrix[i*res.phy_width+j] +=
-//								image.matrix[(i+k)*image.phy_width+j+l]*
-//								matrix[k*phy_width+l];
-//	}
-
-} /* namespace Utils */
+}
 
 
 #endif

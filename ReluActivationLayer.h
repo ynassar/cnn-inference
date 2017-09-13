@@ -7,7 +7,7 @@ namespace CNNInference{
 	class ReluActivationLayer : public Layer
 	{
 	public:
-		Utils::Mat<float>* forward(Utils::Mat<float>* input);
+		CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input);
 		ReluActivationLayer(void);
 		~ReluActivationLayer(void);
 	};
