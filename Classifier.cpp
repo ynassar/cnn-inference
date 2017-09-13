@@ -126,32 +126,6 @@ CNNInference::Matrix<float>* Classifier::predict(CNNInference::Matrix<float>* in
 	return last_layer_output;
 }
 
-CNNInference::Matrix<float>* Classifier::MatrixFromFile(const string& txtfile){
-	ifstream infile(txtfile);
-	int channels_in, height, width;
-	infile >> channels_in >> height >> width;
-	CNNInference::Matrix<float>* input_mat = new CNNInference::Matrix<float>(channels_in, height * width, 1);
-	int temp;
-	float* data = new float[channels_in * height * width];
-	for (int i = 0; i < channels_in * height * width; i ++){
-		infile >> data[i];
-	}
-	ThreeDimensionalArray* input = new ThreeDimensionalArray();
-	input->data = data;
-	input->depth = channels_in;
-	input->height = height;
-	input->width = width;
-
-	for (int i = 0; i < channels_in; i ++){
-		for (int j = 0; j < height; j ++){
-			  for (int k = 0; k < width; k ++){
-				  input_mat->operator [](i)[j*width+k] = input->element_at(i,j,k);
-			  }
-		  }
-	  }
-	return input_mat;
-}
-
 Classifier::~Classifier(void)
 {
 }
