@@ -18,8 +18,8 @@ int main(int argc, char** argv){
 
 	Classifier* classifier = new Classifier(descriptor_file);
 	cout << "Predicting for image " << image_file << endl;
-	CNNInference::Matrix<float>* img_mat = MatrixFromFile(image_file);
-	CNNInference::Matrix<float>* predictions = classifier->predict(img_mat);
+	Matrix<float>* img_mat = MatrixFromFile(image_file);
+	Matrix<float>* predictions = classifier->predict(img_mat);
 	predictions->print_shape();
 }
 
