@@ -14,8 +14,8 @@ namespace CNNInference{
 		Classifier(const std::string& descriptor_file);
 		~Classifier(void);
 
-		CNNInference::Mat<float>* predict(CNNInference::Mat<float>* input);
-		CNNInference::Mat<float>* MatrixFromFile(const std::string& txtfile);
+		CNNInference::Matrix<float>* predict(CNNInference::Matrix<float>* input);
+		CNNInference::Matrix<float>* MatrixFromFile(const std::string& txtfile);
 	};
 
 }

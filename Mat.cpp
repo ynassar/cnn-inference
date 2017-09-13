@@ -432,7 +432,7 @@ inline void transpose_block_SSE4x4(const T *A, T *B, const int n, const int m,
     }
 }
 template<typename T>
-void Mat<T>::mult_4x4_trans(const T *A, const T *B, T *C, int phy_width, int phy_width_b){
+void Matrix<T>::mult_4x4_trans(const T *A, const T *B, T *C, int phy_width, int phy_width_b){
 	__m128	ymm0, ymm1, ymm2, ymm3, ymm4, ymm5, ymm6, ymm7,
 					ymm8, ymm9, ymm10, ymm11, ymm12,ymm13,ymm14,ymm15;
 
@@ -496,7 +496,7 @@ void Mat<T>::mult_4x4_trans(const T *A, const T *B, T *C, int phy_width, int phy
 }
 
 template<typename T>
-void Mat<T>::matmul_avx_8x8(const T *A, const T *B, T *C, int m, int n, int p, int fdA, int fdB, int fdC){
+void Matrix<T>::matmul_avx_8x8(const T *A, const T *B, T *C, int m, int n, int p, int fdA, int fdB, int fdC){
 	for(int i=0;i<m;i+=8){//for A rows
 		for(int j=0;j<n;j+=8){//for A cols, B rows
 			for(int k=0;k<p;k+=8){ //for B cols
@@ -506,7 +506,7 @@ void Mat<T>::matmul_avx_8x8(const T *A, const T *B, T *C, int m, int n, int p, i
 	}
 }
 template<typename T>
-void Mat<T>::matmul_avx_4x4(const T *A, const T *B, T *C, int m, int n, int p, int fdA, int fdB, int fdC){
+void Matrix<T>::matmul_avx_4x4(const T *A, const T *B, T *C, int m, int n, int p, int fdA, int fdB, int fdC){
 	for(int i=0;i<m;i+=4){//for A rows
 		for(int j=0;j<n;j+=4){//for A cols, B rows
 			for(int k=0;k<p;k+=4){ //for B cols
@@ -516,7 +516,7 @@ void Mat<T>::matmul_avx_4x4(const T *A, const T *B, T *C, int m, int n, int p, i
 	}
 }
 template<typename T>
-void Mat<T>::matmul_rec(const T *A, const T *B, T *C,
+void Matrix<T>::matmul_rec(const T *A, const T *B, T *C,
 int m, int n, int p, int fdA, int fdB, int fdC)
 {
  if (m+n+p <= 48) { /* <= 16x16 matrices "on average" */
@@ -545,7 +545,7 @@ int m, int n, int p, int fdA, int fdB, int fdC)
 }
 
 template<typename T>
-	Mat<T>::Mat(const int h, const int w, int r):height(h), width(w),round(r){
+	Matrix<T>::Matrix(const int h, const int w, int r):height(h), width(w),round(r){
 	int align = 64;
 	if(r==4)
 		align = 32;
@@ -556,7 +556,7 @@ template<typename T>
 	}
 
 template<typename T>
-	Mat<T>::Mat(const Mat<T>& x):height(x.height), width(x.width),round(x.round),
+	Matrix<T>::Matrix(const Matrix<T>& x):height(x.height), width(x.width),round(x.round),
 	phy_width(x.phy_width), phy_height(x.phy_height){
 	int align = 32;
 	if(round==4)
@@ -570,14 +570,14 @@ template<typename T>
 		}
 	}
 	template<typename T>
-	Mat<T>::~Mat(){
+	Matrix<T>::~Matrix(){
 //		std::cout<<"ermy"<<std::endl;
 		_mm_free((void*)matrix);
 	}
 
 
 	template<typename T>
-	void Mat<T>::print_shape(){
+	void Matrix<T>::print_shape(){
 		for(int i=0;i<this->height;i++){
 			int ai = i*phy_width;
 			for(int j=0;j<this->width;j++){
@@ -589,7 +589,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	void Mat<T>::fill_rand(float bias){
+	void Matrix<T>::fill_rand(float bias){
 		for(int i=0;i<this->height;i++){
 			int ai = i*phy_width;
 			for(int j=0;j<this->width;j++)
@@ -599,7 +599,7 @@ template<typename T>
 	}
 
 	template<typename T>
-	void Mat<T>::fill_zeros(){
+	void Matrix<T>::fill_zeros(){
 		for(int i=0;i<this->height;i++){
 			int ai = i*phy_width;
 			for(int j=0;j<this->width;j++)
@@ -611,8 +611,8 @@ template<typename T>
 
 
 	template<typename T>
-	Mat<T> Mat<T>::transpose() const{
-		Mat<T> res(this->width, this->height, round);
+	Matrix<T> Matrix<T>::transpose() const{
+		Matrix<T> res(this->width, this->height, round);
 		for(int i=0;i<this->height;i++)
 		{
 			int ai = i*phy_width;
@@ -625,15 +625,15 @@ template<typename T>
 	}
 
 	template<typename T>
-	T* Mat<T>::operator [](const int index){
+	T* Matrix<T>::operator [](const int index){
 		return matrix+index*phy_width;
 	}
 
 
 	template<typename T>
-		Mat<T> Mat<T>:: mult1(const Mat<T>& B) const{
-			Mat<T> op_B = B.transpose();
-			Mat<T> res(this->height, op_B.height, round);
+		Matrix<T> Matrix<T>:: mult1(const Matrix<T>& B) const{
+			Matrix<T> op_B = B.transpose();
+			Matrix<T> res(this->height, op_B.height, round);
 
 			int h = this->height, w = this->width;
 			for(int i=0;i<h;i++){
@@ -651,43 +651,43 @@ template<typename T>
 		}
 
 	template<typename T>
-	void Mat<T>:: mult2(const Mat<T>& B, Mat* output){
+	void Matrix<T>:: mult2(const Matrix<T>& B, Matrix* output){
 		memset(output->matrix, 0, sizeof(float) * output->phy_height*output->phy_width);
 		matmul_rec(this->matrix, B.matrix, output->matrix, this->height, this->width,
 				B.width, this->phy_width, B.phy_width, output->phy_width);
 	}
 	template<typename T>
-	void Mat<T>:: mult3(const Mat<T>& B, Mat* output){
+	void Matrix<T>:: mult3(const Matrix<T>& B, Matrix* output){
 		memset(output->matrix, 0, sizeof(float) * output->phy_height*output->phy_width);
 		matmul_avx_8x8(this->matrix, B.matrix, output->matrix, this->phy_height, this->phy_width,
 				B.phy_width, this->phy_width, B.phy_width, B.phy_width);
 	}
 	template<typename T>
-	Mat<T> Mat<T>:: mult4(const Mat<T>& B){
-		Mat<T> res(this->height, B.width, 4);
+	Matrix<T> Matrix<T>:: mult4(const Matrix<T>& B){
+		Matrix<T> res(this->height, B.width, 4);
 		memset(res.matrix, 0, sizeof(float) * res.phy_height * res.phy_width);
 		matmul_avx_4x4(this->matrix, B.matrix, res.matrix, this->phy_height, this->phy_width,
 				B.phy_width, this->phy_width, B.phy_width, B.phy_width);
 		return res;
 	}
 	template<typename T>
-	Mat<T> Mat<T>::element_wise_mult_SSE(const Mat& op_B) const{
-		Mat<T> res(height, width, round);
+	Matrix<T> Matrix<T>::element_wise_mult_SSE(const Matrix& op_B) const{
+		Matrix<T> res(height, width, round);
 		for(int i=0;i<phy_height;i++)
 			mult_vector_elemnt_SSE(matrix+i*phy_width, op_B.matrix+i*op_B.phy_width,
 					res.matrix+i*phy_width, phy_width);
 		return res;
 	}
 	template<typename T>
-	Mat<T> Mat<T>::element_wise_mult_AVX(const Mat& op_B) const{
-		Mat<T> res(height, width, round);
+	Matrix<T> Matrix<T>::element_wise_mult_AVX(const Matrix& op_B) const{
+		Matrix<T> res(height, width, round);
 		for(int i=0;i<phy_height;i++)
 			mult_vector_elemnt_AVX(matrix+i*phy_width, op_B.matrix+i*op_B.phy_width,
 					res.matrix+i*phy_width, phy_width);
 		return res;
 	}
 	template<typename T>
-	void Mat<T>::element_wise_add_AVX(const Mat& op_B){
+	void Matrix<T>::element_wise_add_AVX(const Matrix& op_B){
 		for(int i=0;i<phy_height;i++)
 			add_vector_elemnt_AVX(matrix+i*phy_width, op_B.matrix+i*op_B.phy_width,
 					this->matrix+i*phy_width, phy_width);

@@ -8,7 +8,7 @@ SigmoidActivationLayer::SigmoidActivationLayer(void)
 {
 }
 
-CNNInference::Mat<float>* SigmoidActivationLayer::forward(CNNInference::Mat<float>* input){
+CNNInference::Matrix<float>* SigmoidActivationLayer::forward(CNNInference::Matrix<float>* input){
 
 	int limit = input->phy_height * input->phy_width;
 	for (int i = 0; i < limit; i ++){

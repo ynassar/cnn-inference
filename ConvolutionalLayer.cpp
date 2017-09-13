@@ -20,14 +20,14 @@ ConvolutionalLayer::ConvolutionalLayer(ThreeDimensionalArray* filters, float* bi
 	this->im2col_kernal(filters, input_depth, output_depth, filter_size);
 	this->output_height = (this->input_height-this->filter_size)/this->stride +1;
 	this->output_width = (this->input_width-this->filter_size)/this->stride +1;
-	this->img_transformed = new CNNInference::Mat<float>(filter_size * filter_size * input_depth, output_height * output_width, 8);
-	this->output = new CNNInference::Mat<float>(this->kernels->height, this->img_transformed->width, 8);
+	this->img_transformed = new CNNInference::Matrix<float>(filter_size * filter_size * input_depth, output_height * output_width, 8);
+	this->output = new CNNInference::Matrix<float>(this->kernels->height, this->img_transformed->width, 8);
 	for (int i = 0; i < this->kernels->height; i ++){
 		for (int j = 0; j < this->img_transformed->width; j ++){
 			(*this->output)[i][j] = 0;
 		}
 	}
-	this->biases = new CNNInference::Mat<float>(*this->output);
+	this->biases = new CNNInference::Matrix<float>(*this->output);
 	for (int i = 0; i < this->biases->height; i ++){
 		for (int j = 0; j < this->biases->width; j ++){
 			(*this->biases)[i][j] = biases[i];
@@ -35,7 +35,7 @@ ConvolutionalLayer::ConvolutionalLayer(ThreeDimensionalArray* filters, float* bi
 	}
 }
 
-CNNInference::Mat<float>* ConvolutionalLayer::forward(CNNInference::Mat<float>* input){
+CNNInference::Matrix<float>* ConvolutionalLayer::forward(CNNInference::Matrix<float>* input){
 	im2col(*input);
 	this->kernels->mult3(*this->img_transformed, this->output);
 	this->output->element_wise_add_AVX(*this->biases);
@@ -45,7 +45,7 @@ CNNInference::Mat<float>* ConvolutionalLayer::forward(CNNInference::Mat<float>* 
 void ConvolutionalLayer::im2col_kernal(ThreeDimensionalArray* filters,
 		int in_c,int out_c, int ker_size)
 {
-			this->kernels = new CNNInference::Mat<float> (out_c,ker_size*ker_size*in_c, 8);
+			this->kernels = new CNNInference::Matrix<float> (out_c,ker_size*ker_size*in_c, 8);
 			int count=0;
 			for(int i=0;i<out_c;i++){
 				count=0;
@@ -59,7 +59,7 @@ void ConvolutionalLayer::im2col_kernal(ThreeDimensionalArray* filters,
 			}
 }
 
-void ConvolutionalLayer::im2col(CNNInference::Mat<float>& images){
+void ConvolutionalLayer::im2col(CNNInference::Matrix<float>& images){
 	int h1 = this->output_height;
 	int w1 = this->output_width;
 	int len= this->input_depth*this->filter_size*this->filter_size*h1*w1;

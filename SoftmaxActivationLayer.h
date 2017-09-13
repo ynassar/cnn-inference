@@ -15,7 +15,7 @@ namespace CNNInference{
 	class SoftmaxActivationLayer: public Layer {
 	public:
 		SoftmaxActivationLayer();
-		CNNInference::Mat<float>* forward(CNNInference::Mat<float>* input);
+		CNNInference::Matrix<float>* forward(CNNInference::Matrix<float>* input);
 		virtual ~SoftmaxActivationLayer();
 	};
 }

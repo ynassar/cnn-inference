@@ -82,8 +82,8 @@ Classifier::Classifier(const string& descriptor_file)
 				infile >> bias[i];
 			}
 
-			CNNInference::Mat<float>* weights_mat = new CNNInference::Mat<float>(input_size, output_size, 8);
-			CNNInference::Mat<float>* bias_mat = new CNNInference::Mat<float>(1, bias_size, 8);
+			CNNInference::Matrix<float>* weights_mat = new CNNInference::Matrix<float>(input_size, output_size, 8);
+			CNNInference::Matrix<float>* bias_mat = new CNNInference::Matrix<float>(1, bias_size, 8);
 
 			for (int i = 0; i < input_size; i ++){
 				for (int j = 0; j < output_size; j ++){
@@ -118,19 +118,19 @@ Classifier::Classifier(const string& descriptor_file)
 	}
 }
 
-CNNInference::Mat<float>* Classifier::predict(CNNInference::Mat<float>* input){
-	CNNInference::Mat<float>* last_layer_output = input;
+CNNInference::Matrix<float>* Classifier::predict(CNNInference::Matrix<float>* input){
+	CNNInference::Matrix<float>* last_layer_output = input;
 	for (int i = 0; i < (int) this->layers.size(); ++i){
 		last_layer_output = this->layers[i]->forward(last_layer_output);
 	}
 	return last_layer_output;
 }
 
-CNNInference::Mat<float>* Classifier::MatrixFromFile(const string& txtfile){
+CNNInference::Matrix<float>* Classifier::MatrixFromFile(const string& txtfile){
 	ifstream infile(txtfile);
 	int channels_in, height, width;
 	infile >> channels_in >> height >> width;
-	CNNInference::Mat<float>* input_mat = new CNNInference::Mat<float>(channels_in, height * width, 1);
+	CNNInference::Matrix<float>* input_mat = new CNNInference::Matrix<float>(channels_in, height * width, 1);
 	int temp;
 	float* data = new float[channels_in * height * width];
 	for (int i = 0; i < channels_in * height * width; i ++){

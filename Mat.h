@@ -12,7 +12,7 @@
 namespace CNNInference {
 
 template<typename T>
-class Mat {
+class Matrix {
 private:
 
 	void matmul_rec(const T *A, const T *B, T *C,
@@ -28,27 +28,27 @@ private:
 public:
 	T *matrix;
 	int height, width, phy_height, phy_width, round;
-	Mat(const int height, const int width, int round);
-	Mat(const Mat<T>& old);
-	Mat(std::vector<std::vector<T> >& nums);
-	Mat(const T** nums, const int& height,const int& width);
-	~Mat();
+	Matrix(const int height, const int width, int round);
+	Matrix(const Matrix<T>& old);
+	Matrix(std::vector<std::vector<T> >& nums);
+	Matrix(const T** nums, const int& height,const int& width);
+	~Matrix();
 	void print_shape();
 	void fill_rand(float bias);
 	void fill_zeros();
-	Mat transpose() const;
-	Mat mult1(const Mat& op_B) const;
-	void mult2(const Mat& op_B, Mat* output);
-	void mult3(const Mat& op_B, Mat* output);
-	Mat mult4(const Mat& op_B);
+	Matrix transpose() const;
+	Matrix mult1(const Matrix& op_B) const;
+	void mult2(const Matrix& op_B, Matrix* output);
+	void mult3(const Matrix& op_B, Matrix* output);
+	Matrix mult4(const Matrix& op_B);
 //	Mat mult5(Mat& op_B) const;
-	Mat& element_wise_mult(const Mat& op_B) const;
-	Mat& avx_mult(const Mat& op_B) const;
-	Mat element_wise_mult_AVX(const Mat& op_B) const;
-	Mat element_wise_mult_SSE(const Mat& op_B) const;
-	Mat& add(const Mat& op_B) const;
-	Mat& avx_add(const Mat& op_B) const;
-	void element_wise_add_AVX(const Mat& op_B);
+	Matrix& element_wise_mult(const Matrix& op_B) const;
+	Matrix& avx_mult(const Matrix& op_B) const;
+	Matrix element_wise_mult_AVX(const Matrix& op_B) const;
+	Matrix element_wise_mult_SSE(const Matrix& op_B) const;
+	Matrix& add(const Matrix& op_B) const;
+	Matrix& avx_add(const Matrix& op_B) const;
+	void element_wise_add_AVX(const Matrix& op_B);
 	T* operator [](const int index);
 
 };
