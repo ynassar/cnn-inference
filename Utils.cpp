@@ -3,7 +3,7 @@
 #include <string>
 
 namespace CNNInference {
-	Matrix<float>* MatrixFromFile(const std::string& txtfile) {
+	Matrix<float>* matrix_from_file(const std::string& txtfile) {
 		std::ifstream infile(txtfile);
 		int channels_in, height, width;
 		infile >> channels_in >> height >> width;
