@@ -30,6 +30,7 @@ for layer in net_param.layer:
         num_channels_out = layer.convolution_param.num_output
         filter_size = layer.convolution_param.kernel_size
         stride = layer.convolution_param.stride[0]
+	padding = layer.convolution_param.pad[0]
         weights = net.params[layer.name][0].data
         bias = net.params[layer.name][1].data
         #weights = weights.reshape( (weights.shape[1], weights.shape[0], weights.shape[2], weights.shape[3]) )
@@ -42,7 +43,7 @@ for layer in net_param.layer:
         weights_list = [str(x) for x in list(weights)]
         bias = bias.flatten()
         bias_list = [str(x) for x in list(bias)]
-        out_descriptorfile.write(' '.join(['Convolution', layer.name, str(stride), str(num_channels_out), str(num_channels_in), str(filter_height), str(filter_width)] + weights_list + [str(bias_size)] + bias_list) + '\n')
+        out_descriptorfile.write(' '.join(['Convolution', layer.name, str(stride), str(padding), str(num_channels_out), str(num_channels_in), str(filter_height), str(filter_width)] + weights_list + [str(bias_size)] + bias_list) + '\n')
     elif layer.type == 'ReLU':
         out_descriptorfile.write(' '.join(['ReLU', layer.name]) + '\n')
     elif layer.type == 'Pooling':

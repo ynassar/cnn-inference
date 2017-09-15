@@ -27,7 +27,8 @@ namespace CNNInference {
 				infile >> layer_name;
 				std::cout << "Building layer " << layer_name << std::endl;
 				int stride;
-				infile >> stride;
+				int padding;
+				infile >> stride >> padding;
 				int in_channels, out_channels, kernel_height, kernel_width;
 				infile >> out_channels >> in_channels >> kernel_height >> kernel_width;
 				float* layer_params = new float[in_channels * out_channels * kernel_height * kernel_width];
@@ -56,7 +57,7 @@ namespace CNNInference {
 					std::cout << "Error reading model, in_channels for layer " << layer_name << " = " << in_channels << " != out channels for previous layer = " << input_depth << std::endl;
 				}
 
-				ConvolutionalLayer* new_layer = new ConvolutionalLayer(filters, bias, kernel_height, out_channels, in_channels, input_height, input_width, stride, 0);
+				ConvolutionalLayer* new_layer = new ConvolutionalLayer(filters, bias, kernel_height, out_channels, in_channels, input_height, input_width, stride, padding);
 				this->layers.push_back(new_layer);
 				input_height = new_layer->output_height;
 				input_width = new_layer->output_width;
