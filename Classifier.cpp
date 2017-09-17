@@ -14,11 +14,98 @@
 
 namespace CNNInference {
 
-	Classifier::Classifier(const std::string& descriptor_file)
+	Classifier::Classifier(const std::string & descriptor_file)
+	{
+		this->mean_image = NULL;
+		this->LoadDescriptor(descriptor_file);
+	}
+
+	Classifier::Classifier(const std::string& descriptor_file, const std::string& mean_img_file)
+	{
+		this->LoadDescriptor(descriptor_file);
+		this->LoadMeanImage(mean_img_file);
+	}
+
+	Matrix<float>* Classifier::predict(Matrix<float>* input) {
+		Matrix<float>* last_layer_output = input;
+		for (int i = 0; i < (int)this->layers.size(); ++i) {
+			last_layer_output = this->layers[i]->forward(last_layer_output);
+		}
+		return last_layer_output;
+	}
+
+	Classifier::~Classifier(void)
+	{
+	}
+
+	Matrix<float>* Classifier::prepare_input(float* input)
+	{
+		Matrix<float>* input_matrix = new Matrix<float>(this->input_depth, this->input_height * this->input_width, 8);
+		if (this->mean_image != NULL) {
+			for (int i = 0; i < this->input_depth; i+=1) {
+				for (int j = 0; j < this->input_height; j+=1) {
+					for (int k = 0; k < this->input_width; k+=1) {
+						*(input_matrix)[i][j * this->input_width + k] = input[i * this->input_height * this->input_width + j * this->input_width + k] - (*this->mean_image)[i][j * this->input_width + k];
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < this->input_depth; i+=1) {
+				for (int j = 0; j < this->input_height; j+=1) {
+					for (int k = 0; k < this->input_width; k+=1) {
+						*(input_matrix)[i][j * this->input_width + k] = input[i * this->input_height * this->input_width + j * this->input_width + k];
+					}
+				}
+			}
+		}
+		return input_matrix;
+	}
+
+	Matrix<float>* Classifier::prepare_input(unsigned char* input)
+	{
+		Matrix<float>* input_matrix = new Matrix<float>(this->input_depth, this->input_height * this->input_width, 8);
+		if (this->mean_image != NULL) {
+			for (int i = 0; i < this->input_depth; i+=1) {
+				for (int j = 0; j < this->input_height; j+=1) {
+					for (int k = 0; k < this->input_width; k+=1) {
+						*(input_matrix)[i][j * this->input_width + k] = (float)input[i * this->input_height * this->input_width + j * this->input_width + k] - (*this->mean_image)[i][j * this->input_width + k];
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < this->input_depth; i+=1) {
+				for (int j = 0; j < this->input_height; j+=1) {
+					for (int k = 0; k < this->input_width; k+=1) {
+						*(input_matrix)[i][j * this->input_width + k] = (float)input[i * this->input_height * this->input_width + j * this->input_width + k];
+					}
+				}
+			}
+		}
+		return input_matrix;
+	}
+
+	void Classifier::LoadMeanImage(const std::string & mean_img_file)
+	{
+		std::ifstream infile(mean_img_file.c_str());
+		int depth, height, width;
+		infile >> depth >> height >> width;
+		this->mean_image = new Matrix<float>(depth, height * width, 8);
+		for (int i = 0; i < depth; i++) {
+			for (int j = 0; j < height; j++) {
+				for (int k = 0; k < width; k++) {
+					float element; infile >> element;
+					(*this->mean_image)[i][j * width + k] = element;
+				}
+			}
+		}
+	}
+	void Classifier::LoadDescriptor(const std::string & descriptor_file)
 	{
 		std::ifstream infile(descriptor_file.c_str());
-		int input_depth, input_n, input_height, input_width;
-		infile >> input_n >> input_depth >> input_height >> input_width;
+		int input_n;
+		infile >> input_n >> this->input_depth >> this->input_height >> this->input_width;
 		while (!infile.eof()) {
 			std::string layer_type;
 			infile >> layer_type;
@@ -117,17 +204,5 @@ namespace CNNInference {
 				this->layers.push_back(new SoftmaxActivationLayer());
 			}
 		}
-	}
-
-	Matrix<float>* Classifier::predict(Matrix<float>* input) {
-		Matrix<float>* last_layer_output = input;
-		for (int i = 0; i < (int)this->layers.size(); ++i) {
-			last_layer_output = this->layers[i]->forward(last_layer_output);
-		}
-		return last_layer_output;
-	}
-
-	Classifier::~Classifier(void)
-	{
 	}
 }

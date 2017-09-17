@@ -8,6 +8,7 @@
 #include "Classifier.h"
 #include "Matrix.h"
 #include "Matrix.cpp"
+#include <cv.hpp>
 #include "Utils.h"
 #include <chrono>
 using namespace std;
@@ -18,11 +19,12 @@ const int NUM_RUNS = 100000;
 int main(int argc, char** argv){
 	string descriptor_file = argv[1];
 	string image_file = argv[2];
-
-	Classifier* classifier = new Classifier(descriptor_file);
+	string mean_image_file = argv[3];
+	Classifier* classifier = new Classifier(descriptor_file, mean_image_file);
 	cout << "Predicting for image " << image_file << endl;
-	Matrix<float>* img_mat = matrix_from_file(image_file);
 	Matrix<float>* predictions;
+	cv::Mat image = cv::imread(image_file);
+	Matrix<float>* img_mat = classifier->prepare_input(image.data);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < NUM_RUNS; i++) {
 		predictions = classifier->predict(img_mat);

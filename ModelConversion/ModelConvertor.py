@@ -30,7 +30,7 @@ for layer in net_param.layer:
         num_channels_out = layer.convolution_param.num_output
         filter_size = layer.convolution_param.kernel_size
         stride = layer.convolution_param.stride[0]
-	padding = layer.convolution_param.pad[0]
+        padding = layer.convolution_param.pad[0]
         weights = net.params[layer.name][0].data
         bias = net.params[layer.name][1].data
         #weights = weights.reshape( (weights.shape[1], weights.shape[0], weights.shape[2], weights.shape[3]) )
