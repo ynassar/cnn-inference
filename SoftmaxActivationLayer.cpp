@@ -33,6 +33,7 @@ namespace CNNInference {
 		for (int i = 0; i < total_data_size; i++) {
 			input->matrix[i] /= sum;
 		}
+
 		return input;
 	}
 

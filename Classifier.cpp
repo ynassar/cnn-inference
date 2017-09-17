@@ -40,21 +40,21 @@ namespace CNNInference {
 
 	Matrix<float>* Classifier::prepare_input(float* input)
 	{
-		Matrix<float>* input_matrix = new Matrix<float>(this->input_depth, this->input_height * this->input_width, 8);
+		Matrix<float>* input_matrix = new Matrix<float>(this->first_layer_input_depth, this->first_layer_input_height* this->first_layer_input_width, 8);
 		if (this->mean_image != NULL) {
-			for (int i = 0; i < this->input_depth; i+=1) {
-				for (int j = 0; j < this->input_height; j+=1) {
-					for (int k = 0; k < this->input_width; k+=1) {
-						*(input_matrix)[i][j * this->input_width + k] = input[i * this->input_height * this->input_width + j * this->input_width + k] - (*this->mean_image)[i][j * this->input_width + k];
+			for (int i = 0; i < this->first_layer_input_depth; i+=1) {
+				for (int j = 0; j < this->first_layer_input_height; j+=1) {
+					for (int k = 0; k < this->first_layer_input_width; k+=1) {
+						(*input_matrix)[i][j * this->first_layer_input_width + k] = input[i * this->first_layer_input_height * this->first_layer_input_width + j * this->first_layer_input_width + k] - (*this->mean_image)[i][j * this->first_layer_input_width + k];
 					}
 				}
 			}
 		}
 		else {
-			for (int i = 0; i < this->input_depth; i+=1) {
-				for (int j = 0; j < this->input_height; j+=1) {
-					for (int k = 0; k < this->input_width; k+=1) {
-						*(input_matrix)[i][j * this->input_width + k] = input[i * this->input_height * this->input_width + j * this->input_width + k];
+			for (int i = 0; i < this->first_layer_input_depth; i+=1) {
+				for (int j = 0; j < this->first_layer_input_height; j+=1) {
+					for (int k = 0; k < this->first_layer_input_width; k+=1) {
+						(*input_matrix)[i][j * this->first_layer_input_width + k] = input[i * this->first_layer_input_height * this->first_layer_input_width + j * this->first_layer_input_width + k];
 					}
 				}
 			}
@@ -64,21 +64,21 @@ namespace CNNInference {
 
 	Matrix<float>* Classifier::prepare_input(unsigned char* input)
 	{
-		Matrix<float>* input_matrix = new Matrix<float>(this->input_depth, this->input_height * this->input_width, 8);
+		Matrix<float>* input_matrix = new Matrix<float>(this->first_layer_input_depth, this->first_layer_input_height * this->first_layer_input_width, 8);
 		if (this->mean_image != NULL) {
-			for (int i = 0; i < this->input_depth; i+=1) {
-				for (int j = 0; j < this->input_height; j+=1) {
-					for (int k = 0; k < this->input_width; k+=1) {
-						*(input_matrix)[i][j * this->input_width + k] = (float)input[i * this->input_height * this->input_width + j * this->input_width + k] - (*this->mean_image)[i][j * this->input_width + k];
+			for (int i = 0; i < this->first_layer_input_depth; i+=1) {
+				for (int j = 0; j < this->first_layer_input_height; j+=1) {
+					for (int k = 0; k < this->first_layer_input_width; k+=1) {
+						(*input_matrix)[i][j * this->first_layer_input_width + k] = (float)input[i * this->first_layer_input_height * this->first_layer_input_width + j * this->first_layer_input_width + k] - (*this->mean_image)[i][j * this->first_layer_input_width + k];
 					}
 				}
 			}
 		}
 		else {
-			for (int i = 0; i < this->input_depth; i+=1) {
-				for (int j = 0; j < this->input_height; j+=1) {
-					for (int k = 0; k < this->input_width; k+=1) {
-						*(input_matrix)[i][j * this->input_width + k] = (float)input[i * this->input_height * this->input_width + j * this->input_width + k];
+			for (int i = 0; i < this->first_layer_input_depth; i+=1) {
+				for (int j = 0; j < this->first_layer_input_height; j+=1) {
+					for (int k = 0; k < this->first_layer_input_width; k+=1) {
+						(*input_matrix)[i][j * this->first_layer_input_width + k] = (float)input[i * this->first_layer_input_height * this->first_layer_input_width + j * this->first_layer_input_width + k];
 					}
 				}
 			}
@@ -104,8 +104,12 @@ namespace CNNInference {
 	void Classifier::LoadDescriptor(const std::string & descriptor_file)
 	{
 		std::ifstream infile(descriptor_file.c_str());
-		int input_n;
-		infile >> input_n >> this->input_depth >> this->input_height >> this->input_width;
+		int input_n, input_depth, input_height, input_width;
+
+		infile >> input_n >> input_depth >> input_height >> input_width;
+		this->first_layer_input_depth = input_depth;
+		this->first_layer_input_height = input_height;
+		this->first_layer_input_width = input_width;
 		while (!infile.eof()) {
 			std::string layer_type;
 			infile >> layer_type;

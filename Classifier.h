@@ -11,7 +11,7 @@ namespace CNNInference{
 	{
 		std::vector<Layer*> layers;
 		Matrix<float>* mean_image;
-		int input_depth, input_height, input_width;
+		int first_layer_input_depth, first_layer_input_height, first_layer_input_width;
 	public:
 		Classifier(const std::string& descriptor_file);
 		Classifier(const std::string& descriptor_file, const std::string& mean_img_file);
