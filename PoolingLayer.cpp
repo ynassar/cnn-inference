@@ -52,7 +52,7 @@ namespace CNNInference {
 	}
 
 	PoolingLayer::~PoolingLayer() {
-		// TODO Auto-generated destructor stub
+		delete this->output;
 	}
 
 }

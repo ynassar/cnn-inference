@@ -79,5 +79,10 @@ namespace CNNInference {
 
 	ConvolutionalLayer::~ConvolutionalLayer(void)
 	{
+		delete this->img_transformed;
+		delete this->kernels;
+		delete this->biases;
+		delete this->raw_filters;
+		delete this->output;
 	}
 }

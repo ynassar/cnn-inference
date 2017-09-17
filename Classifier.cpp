@@ -36,6 +36,7 @@ namespace CNNInference {
 
 	Classifier::~Classifier(void)
 	{
+		this->layers.clear();
 	}
 
 	Matrix<float>* Classifier::prepare_input(float* input)

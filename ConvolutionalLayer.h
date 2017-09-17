@@ -13,9 +13,6 @@ namespace CNNInference {
 		CNNInference::Matrix<float>* biases;
 		CNNInference::Matrix<float>* img_transformed;
 		ThreeDimensionalArray* raw_filters;
-		float* transformed_filters;
-		float* winograd_img;
-		float* add_mult_res;
 		int input_depth;
 		int output_depth;
 		int filter_size;

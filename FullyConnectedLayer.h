@@ -10,10 +10,11 @@ namespace CNNInference{
 	class FullyConnectedLayer : public Layer
 	{
 	public:
-		CNNInference::Matrix<float>* output;
-		CNNInference::Matrix<float>* weights;
-		CNNInference::Matrix<float>* biases;
-		CNNInference::Matrix<float>* x;
+		Matrix<float>* output;
+		Matrix<float>* weights;
+		Matrix<float>* biases;
+		Matrix<float>* x;
+		Matrix<float>* flat_input;
 		FullyConnectedLayer(void);
 		FullyConnectedLayer(int input_dimension, int output_dimension, CNNInference::Matrix<float>* weights, CNNInference::Matrix<float>* biases);
 		CNNInference::Matrix<float>* forward(CNNInference::Matrix<float>* input);
