@@ -4,7 +4,7 @@
 #include <iomanip>
 #include<chrono>
 #include "Matrix.cpp"
-
+#define ROUND_UP(x, s) (((x)+((s)-1)) & -(s))
 namespace CNNInference {
 	ConvolutionalLayer::ConvolutionalLayer(ThreeDimensionalArray* filters, float* biases, int filter_size, int output_depth, int input_depth, int input_height, int input_width, int stride, int padding)
 	{
@@ -16,7 +16,6 @@ namespace CNNInference {
 		this->input_width = input_width;
 		this->stride = stride;
 		this->padding = padding;
-		std::cout << "Entering im2col kernal filter_size = " << filter_size << std::endl;
 		this->im2row_kernal(filters, input_depth, output_depth, filter_size);
 		this->output_height = (this->input_height - this->filter_size + padding + padding) / this->stride + 1;
 		this->output_width = (this->input_width - this->filter_size + padding + padding) / this->stride + 1;
@@ -106,51 +105,26 @@ namespace CNNInference {
 
 	}
 	void ConvolutionalLayer::im2row(Matrix<float>& images) {
-		__m256 ymm0;
-		uint16_t tempi, tempj;
-		uint16_t f = this->filter_size;
-		uint16_t siz = ROUND_UP(f*f, 8);
-		uint16_t pad = this->padding;
-		uint16_t in_h = this->input_height;
-		uint16_t in_w = this->input_width;
-		uint16_t out_w = this->output_width;
-		uint16_t f_f = f * f;
-		uint16_t c_f_f;
-		uint16_t k_f;
-		uint16_t tempi_in_w;
-		uint16_t in_h_pad = in_h + pad;
-		uint16_t in_w_pad = in_w + pad;
-		uint16_t i_stride;
-		uint16_t j_stride;
-		uint16_t i_out_w;
-		for (uint16_t c = 0; c < input_depth; ++c) {
-			c_f_f = c * f_f;
-			for (uint16_t i = 0; i < output_height; ++i) {
-				i_stride = i * stride;
-				i_out_w = i * out_w;
-				for (uint16_t j = 0; j < output_width; ++j) {
-					j_stride = j * stride;
-					for (uint16_t k = 0; k < filter_size; ++k) {
-						tempi = (i_stride + k);
-						k_f = k * f;
-						tempi_in_w = tempi * in_w;
-						for (uint16_t l = 0; l < filter_size; ++l) {
-							tempj = j_stride + l;
-							if (~(tempi < pad || tempi >= in_h_pad ||
-								tempj < pad || tempj >= in_w_pad))
-								filter[k_f + l] = images[c][tempi_in_w + tempj];
+		__m256 ymm0, ymm1, ymm2;
+		int tempi, tempj;
+		int siz = ROUND_UP(filter_size*filter_size, 8);
+		for (int c = 0; c < input_depth; c++)
+			for (int i = 0; i < output_height; i++)
+				for (int j = 0; j < output_width; j++) {
+					for (int k = 0; k < filter_size; k++) {
+						tempi = (i*stride + k);
+						for (int l = 0; l < filter_size; l++) {
+							tempj = j*stride + l;
+							if (~(tempi < padding || tempi >= input_height + padding ||
+								tempj < padding || tempj >= input_width + padding))
+								(*img_transformed)[i*output_width + j][(c*filter_size*filter_size) + k*filter_size + l] =
+								images[c][tempi*input_width + tempj];
 							else
-								filter[k_f + l] = 0.00000001f;
-
+								(*img_transformed)[i*output_width + j][(c*filter_size*filter_size) + k*filter_size + l] = 0.f;
+							
 						}
 					}
-					for (uint16_t t = 0; t < siz; t += 8) {
-						ymm0 = _mm256_loadu_ps(filter + t);
-						_mm256_storeu_ps(&(*img_transformed)[i_out_w + j][(c_f_f) + t], ymm0);
-					}
 				}
-			}
-		}
 	}
 	void ConvolutionalLayer::im2row_kernal(ThreeDimensionalArray* filters,
 		int in_c, int out_c, int ker_size)
@@ -167,15 +141,10 @@ namespace CNNInference {
 						count++;
 					}
 		}
+
 	}
 
 	ConvolutionalLayer::~ConvolutionalLayer(void)
 	{
-		delete this->biases;
-		delete this->filter;
-		delete this->img_transformed;
-		delete this->output;
-		delete this->output_transposed;
-		delete this->raw_filters;
 	}
 }

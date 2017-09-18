@@ -28,7 +28,7 @@ int main(int argc, char** argv){
 	cv::Mat resized;
 	cv::Mat floated;
 	cv::cvtColor(raw_image, converted, cv::COLOR_BGR2GRAY);
-	cv::resize(converted, resized, cv::Size(28, 28));
+	cv::resize(converted, resized, cv::Size(classifier->first_layer_input_height, classifier->first_layer_input_width));
 	resized.convertTo(floated, CV_32FC1);
 	Matrix<float>* img_mat = classifier->prepare_input((float*)floated.data);
 	auto start = std::chrono::high_resolution_clock::now();

@@ -629,21 +629,6 @@ namespace CNNInference {
 			for (int j = 0; j < B.width; j++)
 				for (int k = 0; k < width; k++)
 					(*output)[i][j] += B[k][j] * (*this)[i][k];
-		/*Matrix<T> op_B = B.transpose();
-
-
-		int h = this->height, w = this->width;
-		for(int i=0;i<h;i++){
-		int ai = i*phy_width;
-		for(int j=0;j<op_B.height;j++){
-		T* bi= op_B[j];
-		T temp = 0.f;
-		for(int k=0; k<w;k++){
-		temp+= matrix[ai+k]*bi[k];
-		}
-		(*output)[i][j]=temp;
-		}
-		}*/
 	}
 
 	template<typename T>
@@ -771,6 +756,12 @@ namespace CNNInference {
 		for (int i = 0; i<height; i++)
 			add_vector_elemnt_AVX(matrix + i*phy_width, op_B.matrix + i*op_B.phy_width,
 				this->matrix + i*phy_width, phy_width);
+	}
+	template<typename T>
+	void Matrix<T>::element_wise_add_test(Matrix& op_B) {
+		for (int i = 0; i < height; i++)
+			for (int j = 0; j < width; j++)
+				(*this)[i][j] += op_B[i][j];
 	}
 
 }

@@ -30,22 +30,22 @@ namespace CNNInference {
 	}
 
 	Matrix<float>* PoolingLayer::forward(Matrix<float>* input) {
-		uint16_t row_start_stride;
-		uint16_t col_start_stride;
-		uint16_t row_start_width;
-		for(uint16_t i = 0; i < this->input_depth; ++i) {
+		unsigned int row_start_stride;
+		unsigned int col_start_stride;
+		unsigned int row_start_width;
+		for(unsigned int i = 0; i < this->input_depth; ++i) {
 			float* matrix = (*input)[i];
 			float* out_matrix = (*this->output)[i];
-			for (uint16_t row_start = 0; row_start < this->output_height; ++row_start) {
+			for (unsigned int row_start = 0; row_start < this->output_height; ++row_start) {
 				row_start_stride = row_start * this->stride;
 				row_start_width = row_start * this->output_width;
-				for (uint16_t col_start = 0; col_start < this->output_width; ++col_start) {
+				for (unsigned int col_start = 0; col_start < this->output_width; ++col_start) {
 					col_start_stride = col_start * this->stride;
 					float mval = -std::numeric_limits<float>::max();
-					for (uint16_t filter_i = 0; filter_i < this->kernel_size; ++filter_i) {
-						for (uint16_t filter_j = 0; filter_j < this->kernel_size; ++filter_j) {
-							uint16_t mat_i = row_start_stride + filter_i;
-							uint16_t mat_j = col_start_stride + filter_j;
+					for (unsigned int filter_i = 0; filter_i < this->kernel_size; ++filter_i) {
+						for (unsigned int filter_j = 0; filter_j < this->kernel_size; ++filter_j) {
+							unsigned int mat_i = row_start_stride + filter_i;
+							unsigned int mat_j = col_start_stride + filter_j;
 							if (mat_i < this->input_height && mat_j < this->input_width)
 								mval = std::max(mval, matrix[this->input_width * mat_i + mat_j]);
 						}

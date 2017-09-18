@@ -30,6 +30,8 @@ namespace CNNInference {
 		int height, width, phy_height, phy_width, round;
 		Matrix(const int height, const int width, int round);
 		Matrix(const Matrix<T>& old);
+		Matrix(std::vector<std::vector<T> >& nums);
+		Matrix(const T** nums, const int& height, const int& width);
 		~Matrix();
 		void print_shape();
 		void fill_rand(float bias);
@@ -40,10 +42,16 @@ namespace CNNInference {
 		void mult3(const Matrix& op_B, Matrix* output);
 		Matrix mult4(const Matrix& op_B);
 		void mult5(Matrix& op_B, Matrix* output);
+		Matrix& element_wise_mult(const Matrix& op_B) const;
+		Matrix& avx_mult(const Matrix& op_B) const;
 		Matrix element_wise_mult_AVX(const Matrix& op_B) const;
 		Matrix element_wise_mult_SSE(const Matrix& op_B) const;
+		Matrix& add(const Matrix& op_B) const;
+		Matrix& avx_add(const Matrix& op_B) const;
 		void element_wise_add_AVX(const Matrix& op_B);
+		void element_wise_add_test(Matrix& op_B);
 		T* operator [](const int index);
+
 	};
 
 } /* namespace Utils */

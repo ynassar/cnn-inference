@@ -104,6 +104,7 @@ namespace CNNInference {
 	}
 	void Classifier::LoadDescriptor(const std::string & descriptor_file)
 	{
+		std::cout << descriptor_file << std::endl;
 		std::ifstream infile(descriptor_file.c_str());
 		int input_n, input_depth, input_height, input_width;
 
@@ -129,10 +130,10 @@ namespace CNNInference {
 					infile >> layer_params[i];
 				}
 
-				int bias_size; infile >> bias_size;
+				int conv_bias_size; infile >> conv_bias_size;
 
-				float* bias = new float[bias_size];
-				for (int i = 0; i < bias_size; i++) {
+				float* bias = new float[conv_bias_size];
+				for (int i = 0; i < conv_bias_size; i++) {
 					infile >> bias[i];
 				}
 
@@ -169,14 +170,14 @@ namespace CNNInference {
 				for (int i = 0; i < input_size * output_size; i++) {
 					infile >> weights[i];
 				}
-				int bias_size; infile >> bias_size;
-				float* bias = new float[bias_size];
-				for (int i = 0; i < bias_size; i++) {
+				int fc_bias_size; infile >> fc_bias_size;
+				float* bias = new float[fc_bias_size];
+				for (int i = 0; i < fc_bias_size; i++) {
 					infile >> bias[i];
 				}
 
 				Matrix<float>* weights_mat = new Matrix<float>(input_size, output_size, 8);
-				Matrix<float>* bias_mat = new Matrix<float>(1, bias_size, 8);
+				Matrix<float>* bias_mat = new Matrix<float>(1, fc_bias_size, 8);
 
 				for (int i = 0; i < input_size; i++) {
 					for (int j = 0; j < output_size; j++) {
@@ -184,7 +185,7 @@ namespace CNNInference {
 					}
 				}
 
-				for (int i = 0; i < bias_size; i++) {
+				for (int i = 0; i < fc_bias_size; i++) {
 					bias_mat->operator [](0)[i] = bias[i];
 				}
 
