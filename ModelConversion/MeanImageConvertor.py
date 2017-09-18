@@ -17,6 +17,7 @@ mean_img_height = mean_img.shape[1]
 mean_img_width = mean_img.shape[2]
 
 mean_img = mean_img.flatten()
+mean_img.fill(mean_img.mean())
 mean_img_list = [str(x) for x in mean_img]
 
 file_stream = open(out_file, 'w')
