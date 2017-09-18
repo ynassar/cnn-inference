@@ -14,7 +14,7 @@
 using namespace std;
 using namespace CNNInference;
 
-const int NUM_RUNS = 10000;
+const int NUM_RUNS = 100000;
 
 int main(int argc, char** argv){
 	string descriptor_file = argv[1];
@@ -23,10 +23,14 @@ int main(int argc, char** argv){
 	Classifier* classifier = new Classifier(descriptor_file, mean_image_file);
 	cout << "Predicting for image " << image_file << endl;
 	Matrix<float>* predictions;
-	cv::Mat image = cv::imread(image_file);
-	cv::Mat resized_image;
-	cv::resize(image, resized_image, cv::Size(28,28));
-	Matrix<float>* img_mat = classifier->prepare_input(resized_image.data);
+	cv::Mat raw_image = cv::imread(image_file, -1);
+	cv::Mat converted;
+	cv::Mat resized;
+	cv::Mat floated;
+	cv::cvtColor(raw_image, converted, cv::COLOR_BGR2GRAY);
+	cv::resize(converted, resized, cv::Size(28, 28));
+	resized.convertTo(floated, CV_32FC1);
+	Matrix<float>* img_mat = classifier->prepare_input((float*)floated.data);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < NUM_RUNS; i++) {
 		predictions = classifier->predict(img_mat);
@@ -35,5 +39,3 @@ int main(int argc, char** argv){
 	std::cout << NUM_RUNS << " predictions took " << std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / (NUM_RUNS * 1.f) << " ns per run.\n";
 	predictions->print_shape();
 }
-
-

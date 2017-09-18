@@ -21,5 +21,6 @@ namespace CNNInference {
 
 	ThreeDimensionalArray::~ThreeDimensionalArray(void)
 	{
+		delete this->data;
 	}
 }
