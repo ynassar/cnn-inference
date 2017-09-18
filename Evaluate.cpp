@@ -27,7 +27,6 @@ int main(int argc, char** argv){
 	cv::Mat resized_image;
 	cv::resize(image, resized_image, cv::Size(28,28));
 	Matrix<float>* img_mat = classifier->prepare_input(resized_image.data);
-	img_mat->print_shape();
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < NUM_RUNS; i++) {
 		predictions = classifier->predict(img_mat);
